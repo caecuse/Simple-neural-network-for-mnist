@@ -92,7 +92,7 @@ def test_mnist(network, test_size, x_test, y_test):
 
 def main():
     (x_train, y_train), (x_test, y_test) = prep_data()
-    network = create_network([100, 50, 25], x_train, y_train, sigmoid, sigmoid_prime, mse, mse_prime, test_size=20000, epochs=30)
+    network = create_network([200, 100, 50, 25], x_train, y_train, sigmoid, sigmoid_prime, mse, mse_prime, test_size=30000, epochs=10)
 
     print("Accuracy for 1000 samples is:")
     print(test_mnist(network, 1000, x_test, y_test))
