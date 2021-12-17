@@ -3,7 +3,7 @@
 
 Kinda basic implemention of the most basic neural network you can make, specifically written for mnist dataset. Of course you can add as many layers as you want and add loss and activation functions yourself in proper files.
 
-## Optimazing
+## Optimizing
 
 Optimizing alghoritm for this implementation is the most simple gradient descent I came up with.
 
