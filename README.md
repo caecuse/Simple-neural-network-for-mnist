@@ -44,4 +44,4 @@ NETWORK CLASSIFIED 7 as 2 with probability of 0.778977682926675
 NETWORK CLASSIFIED 8 as 8 with probability of 0.5401737087583314
 NETWORK CLASSIFIED 9 as 3 with probability of 0.45197299505509914
 ```
-Which is not too bad considering the fact we didnt use any droput technics nor regularization. If you want to pump up that score you can experiment with adding more layers to the `network` or just grabbing bigger `train_size` than I did.
+Which is not too bad considering the fact we didnt use any dropout technics nor regularization. If you want to pump up that score you can experiment with adding more layers to the `network` or just grabbing bigger `train_size` than I did.
