@@ -7,8 +7,8 @@ class CLayer(Layer):
     Represents "static" layer
     """
     def __init__(self, input_size, output_size):
-        self.weights = np.random.randn(input_size, output_size)
-        self.bias = np.random.randn(1, output_size)
+        self.weights = np.random.rand(input_size, output_size) - 0.5
+        self.bias = np.random.rand(1, output_size) - 0.5
 
     def forward_propagation(self, input_data):
         """
