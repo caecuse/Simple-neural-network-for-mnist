@@ -23,7 +23,7 @@ net.add(ActiveLayer(activation, activation_prime))
 ```
 And thats neural network for ya. There absolutly more of them fancy parameteres in there like `learning_rate` and `epochs` for training that net, but who would bother setting them anyways.
 # Accuracy
-We cannot forget about tests now, can we? So in `main.py` you should find `test_mnist` and `test_real` functions. First one takes arguments from mnist database (sample to your liking) and checks them against the network and checks them hard - if the value is what it should be it's a hit, otherwise I don't care how close it was. If you like to, go ahead and play with it to give you what ya want. Second one on the other hand checks the samples I drew against the net, they are not perfect but I just like to see real-life usage of stuff like that irl so I did. If you want to drew samples yourself, go ahead just remember to not change the names in the file, cuz those names they the function (in a way) whether it's a hit or nay.
+We cannot forget about tests now, can we? So in `main.py` you should find `test_mnist` and `test_real` functions. First one takes arguments from mnist database (sample to your liking) and checks them against the network and checks them hard - if the value is what it should be it's a hit, otherwise I don't care how close it was. If you like to, go ahead and play with it to give you what ya want. Second one on the other hand checks the samples I drew against the net, they are not perfect but I just like to see real-life usage of stuff like that irl so I did. If you want to drew samples yourself, go ahead just remember to not change the names in the file, cuz those names tell the function (in a way) whether it's a hit or nay.
 ## Test
 Paremetres of the test:
 ```py
