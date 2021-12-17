@@ -2,9 +2,6 @@ from layer import Layer
 import numpy as np
 
 
-from layer import Layer
-import numpy as np
-
 class CLayer(Layer):
     """
     Represents "static" layer
@@ -20,7 +17,6 @@ class CLayer(Layer):
         self.input = input_data
         self.output = np.dot(self.input, self.weights) + self.bias
         return self.output
-
 
     def backward_propagation(self, output_error, learning_rate):
         """

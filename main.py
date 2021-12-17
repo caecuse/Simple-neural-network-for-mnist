@@ -3,22 +3,18 @@ from keras.utils import np_utils
 import cv2
 import glob
 import numpy as np
-import matplotlib.pyplot as plt
-import sys
-import numpy
-numpy.set_printoptions(threshold=sys.maxsize)
 from network import Network
 from c_layer import CLayer
 from active_layer import ActiveLayer
 from activation_functions import sigmoid, sigmoid_prime
 from losses import mse, mse_prime
 
-FILES = glob.glob ("C:/Users/aniem/Documents/Code/WSI/LAB5/samples/*.jpg")
+FILES = glob.glob("C:/Users/aniem/Documents/Code/WSI/LAB5/samples/*.jpg")
+
 
 def prep_data():
     # mnist data : 60000 samples
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
-
 
     # reshape and normalize
     x_train = x_train.reshape(x_train.shape[0], 1, 28*28)
@@ -35,6 +31,7 @@ def prep_data():
     y_test = np_utils.to_categorical(y_test)
 
     return (x_train, y_train), (x_test, y_test)
+
 
 def create_network(shape, x_data, y_data, activaion, activation_prime, loss, loss_prime, epochs=30, learning_rate=0.1, test_size=1000):
     net = Network()
@@ -61,6 +58,7 @@ def convert(path='samples'):
         test_list.append(image)
     return test_list
 
+
 def test_real(network):
     out = network.predict(convert())
     values = list()
@@ -81,7 +79,6 @@ def test_real(network):
     return output
 
 
-
 def test_mnist(network, test_size, x_test, y_test):
     out = network.predict(x_test[:test_size])
     accuracy = 0
@@ -93,16 +90,14 @@ def test_mnist(network, test_size, x_test, y_test):
     return accuracy / test_size
 
 
-
 def main():
     (x_train, y_train), (x_test, y_test) = prep_data()
-    network = create_network([100, 25], x_train, y_train, sigmoid, sigmoid_prime, mse, mse_prime,test_size=10000, epochs=35)
+    network = create_network([200, 100, 50, 25], x_train, y_train, sigmoid, sigmoid_prime, mse, mse_prime, test_size=30000, epochs=50)
 
     print("Accuracy for 1000 samples is:")
     print(test_mnist(network, 1000, x_test, y_test))
 
     print(test_real(network))
-
 
 
 if __name__ == '__main__':
