@@ -1,5 +1,6 @@
 from layer import Layer
 
+
 # inherit from base class Layer
 class ActiveLayer(Layer):
     """
