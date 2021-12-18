@@ -1,16 +1,19 @@
-from typing import Callable, List, Tuple
+import cv2
+import numpy as np
+import glob
+import argparse
+from typing import Callable, List, Tuple, TypeVar
 from keras.datasets import mnist
 from keras.utils import np_utils
-import cv2
-import glob
-import numpy as np
 from network import Network
 from c_layer import CLayer
 from active_layer import ActiveLayer
 from activation_functions import sigmoid, sigmoid_prime
 from losses import mse, mse_prime
 from os import getcwd
+from sys import argv
 
+A = TypeVar("A")
 FILES = glob.glob(getcwd()+"/samples/*.jpg")
 
 
@@ -96,18 +99,38 @@ def test_mnist(network: Network, test_size: int, x_test: np.ndarray,
     return accuracy / test_size
 
 
-def main() -> None:
-    (x_train, y_train), (x_test, y_test) = prep_data()
-    network = create_network([200, 100, 50, 25], x_train, y_train, sigmoid, sigmoid_prime,
-                             mse, mse_prime, test_size=30000, epochs=10)
-    # network = create_network([100, 25], x_train, y_train, sigmoid, sigmoid_prime,
-    #                           mse, mse_prime, test_size=10000, epochs=10)
+def main(arguments: A) -> None:
+    if not arguments['layers']:
+        if arguments['test_size'] or arguments['epochs']:
+            print("At least one layer has to be specified when test_size or epochs are provided")
+        else:
+            pass # TODO graph
+    else:
+        ts = 1000
+        ep = 10
+        shape = arguments['layers']
+        if arguments['test_size']:
+            ts = arguments['test_size']
+        if arguments['epochs']:
+            ep = arguments['epochs']
+        (x_train, y_train), (x_test, y_test) = prep_data()
+        network = create_network(shape, x_train, y_train, sigmoid, sigmoid_prime,
+                                mse, mse_prime, test_size=ts, epochs=ep)
+        # network = create_network([100, 25], x_train, y_train, sigmoid, sigmoid_prime,
+        #                           mse, mse_prime, test_size=10000, epochs=10)
 
-    print("Accuracy for 1000 samples is:")
-    print(test_mnist(network, 1000, x_test, y_test))
+        print("Accuracy for 1000 samples is:")
+        print(test_mnist(network, 1000, x_test, y_test))
 
-    print(test_real(network))
+        print(test_real(network))
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Start up the neural network.')
+    parser.add_argument('layers', metavar='layers', type=int, nargs='*')
+    parser.add_argument('--test_size', type=int)
+    parser.add_argument('--epochs', type=int)
+    args = vars(parser.parse_args())
+    main(args)
+
+# python3 ./main.py 200 100 50 25 --test_size 30000  --epochs 10

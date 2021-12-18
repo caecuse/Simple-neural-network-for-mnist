@@ -58,4 +58,4 @@ class Network:
 
             # calculate average error on all samples
             err /= samples
-            print('epoch %d/%d   error=%f' % (i+1, epochs, err))
+            print(f'epoch {i+1}/{epochs}   error={err}')

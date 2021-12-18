@@ -1,4 +1,5 @@
 from layer import Layer
+from typing import Callable
 import numpy as np
 
 
@@ -7,7 +8,8 @@ class ActiveLayer(Layer):
     """
     Represents "thinking" layer
     """
-    def __init__(self, activation, activation_prime) -> None:
+    def __init__(self, activation: Callable[[float], float],
+                 activation_prime: Callable[[float], float]) -> None:
         """
         Sets function used to activate neurons for this layer
         """
