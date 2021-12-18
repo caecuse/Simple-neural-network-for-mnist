@@ -18,7 +18,7 @@ class CLayer(Layer):
         self.output = np.dot(self.input, self.weights) + self.bias
         return self.output
 
-    def backward_propagation(self, output_error, learning_rate):
+    def backward_propagation(self, output_error, learning_rate: np.ndarray) -> np.ndarray:
         """
         Computes dE/dW, dE/dB for a given output_error = dE/dY. Returns input_error = dE/dX
         """

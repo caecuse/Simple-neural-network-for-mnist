@@ -1,4 +1,28 @@
-class Layer:
+# class Layer:
+#     """
+#     Abstract class representing layer for neural network
+#     """
+#     def __init__(self) -> None:
+#         self.input = None
+#         self.output = None
+
+#     def forward_propagation(self, input):
+#         """
+#         Used to get data from previous layer
+#         """
+#         raise NotImplementedError
+
+#     def bacwards_propagation(self, output_error, learning_rate):
+#         """
+#         Needed to provide derrivative of an error based on input
+#         """
+#         raise NotImplementedError
+
+from typing import TypeVar
+from abc import ABC, abstractmethod
+T = TypeVar('T')
+
+class Layer(ABC):
     """
     Abstract class representing layer for neural network
     """
@@ -6,14 +30,16 @@ class Layer:
         self.input = None
         self.output = None
 
-    def forward_propagation(self, input):
+    @abstractmethod
+    def forward_propagation(self, input: T) -> T:
         """
         Used to get data from previous layer
         """
-        raise NotImplementedError
+        pass
 
-    def bacwards_propagation(self, output_error, learning_rate):
+    @abstractmethod
+    def backward_propagation(self, output_error, learning_rate) -> T:
         """
         Needed to provide derrivative of an error based on input
         """
-        raise NotImplementedError
+        pass

@@ -1,20 +1,24 @@
+from layer import Layer
+from typing import Callable, List
+import numpy as np
+
 class Network:
-    def __init__(self):
+    def __init__(self) -> None:
         self.layers = []
         self.loss = None
         self.loss_prime = None
 
     # add layer to network
-    def add(self, layer):
+    def add(self, layer: Layer) -> None:
         self.layers.append(layer)
 
     # set loss to use
-    def use(self, loss, loss_prime):
+    def use(self, loss: Callable[[float], float], loss_prime: Callable[[float], float]) -> None:
         self.loss = loss
         self.loss_prime = loss_prime
 
     # predict output for given input
-    def predict(self, input_data):
+    def predict(self, input_data: List[np.ndarray]) -> List[np.ndarray]:
         # sample dimension first
         samples = len(input_data)
         result = []
@@ -30,7 +34,8 @@ class Network:
         return result
 
     # train the network
-    def fit(self, x_train, y_train, epochs, learning_rate):
+    def fit(self, x_train: np.ndarray, y_train: np.ndarray, epochs: int,
+            learning_rate: float) -> None:
         # sample dimension first
         samples = len(x_train)
 
