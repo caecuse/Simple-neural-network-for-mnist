@@ -4,8 +4,10 @@ import glob
 import argparse
 from matplotlib import pyplot as plt
 from typing import Callable, List, Tuple, TypeVar
-from keras.datasets import mnist
-from keras.utils import np_utils
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras import utils
+# from keras.datasets import mnist
+# from keras.utils import np_utils
 from network import Network
 from c_layer import CLayer
 from active_layer import ActiveLayer
@@ -13,6 +15,8 @@ from activation_functions import sigmoid, sigmoid_prime
 from losses import mse, mse_prime
 from os import getcwd
 from tqdm import tqdm
+
+
 
 A = TypeVar("A")
 FILES = glob.glob(getcwd()+"/samples/*.jpg")
@@ -27,13 +31,13 @@ def prep_data() -> Tuple[Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.nda
     x_train /= 255
     # encode output which is a number in range [0,9] into a vector of size 10
     # e.g. number 3 will become [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
-    y_train = np_utils.to_categorical(y_train)
+    y_train = utils.to_categorical(y_train)
 
     # same for test data : 60000 samples
     x_test = x_test.reshape(x_test.shape[0], 1, 28*28)
     x_test = x_test.astype('float32')
     x_test /= 255
-    y_test = np_utils.to_categorical(y_test)
+    y_test = utils.to_categorical(y_test)
     return (x_train, y_train), (x_test, y_test)
 
 
@@ -114,13 +118,17 @@ def main(arguments: A) -> None:
             print("At least one layer has to be specified when train_size or epochs are provided")
         else:
             mnist_results = []
+            train_size = [1000, 5000, 10000, 15000, 20000]
+            epoch_size = [20, 40, 60, 80, 100]
             (x_train, y_train), (x_test, y_test) = prep_data()
-            for i, ts in tqdm(enumerate([5000, 10000, 15000, 20000])): #1000, 2000, 5000, 10000, 30000
-                mnist_results.append([])
-                for ep in [20, 40, 60, 80]:
-                    network = create_network([100, 50, 25], x_train, y_train, sigmoid, sigmoid_prime,
-                                mse, mse_prime, train_size=ts, epochs=ep)
-                    mnist_results[i].append(test_mnist(network, ts, x_test, y_test))
+            with tqdm(total=len(train_size)*len(epoch_size)) as progress_bar:
+                for i, ts in (enumerate([1000, 5000, 10000, 15000, 20000])): #1000, 2000, 5000, 10000, 30000
+                    mnist_results.append([])
+                    for ep in (epoch_size):
+                        network = create_network([200, 100, 50, 25], x_train, y_train, sigmoid, sigmoid_prime,
+                                    mse, mse_prime, train_size=ts, epochs=ep)
+                        mnist_results[i].append(test_mnist(network, ts, x_test, y_test))
+                        progress_bar.update(1)
         plotter(mnist_results)
     else:
         ts = 1000
