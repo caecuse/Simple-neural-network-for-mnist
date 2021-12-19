@@ -12,6 +12,7 @@ from active_layer import ActiveLayer
 from activation_functions import sigmoid, sigmoid_prime
 from losses import mse, mse_prime
 from os import getcwd
+from tqdm import tqdm
 
 A = TypeVar("A")
 FILES = glob.glob(getcwd()+"/samples/*.jpg")
@@ -98,11 +99,14 @@ def test_mnist(network: Network, test_size: int, x_test: np.ndarray,
             accuracy += 1
     return accuracy / test_size
 
-
 def plotter(mnist_data: List[List[float]]):
-    im = plt.imshow(mnist_data, extent=[0, len(mnist_data), 0, len(mnist_data[0])])
+    im = plt.imshow(mnist_data[::-1], extent=[0, len(mnist_data[0]), 0, len(mnist_data)])
+    plt.colorbar(label="Accuracy of alg.")
+    plt.xlabel("Epochs")
+    plt.ylabel("Test size")
+    plt.xticks(np.arange(0, len(mnist_data[0])+1, 1))
+    plt.yticks(np.arange(0, len(mnist_data)+1, 1))
     plt.show()
-
 
 def main(arguments: A) -> None:
     if not arguments['layers']:
@@ -111,11 +115,11 @@ def main(arguments: A) -> None:
         else:
             mnist_results = []
             (x_train, y_train), (x_test, y_test) = prep_data()
-            for i, ts in enumerate([1, 2]): #1000, 2000, 5000, 10000, 30000
+            for i, ts in tqdm(enumerate([5000, 10000, 15000, 20000])): #1000, 2000, 5000, 10000, 30000
                 mnist_results.append([])
-                for ep in [1, 10, 20, 50, 100]:
-                    network = create_network([200, 100, 50, 25], x_train, y_train, sigmoid, sigmoid_prime,
-                                mse, mse_prime, train_size=ts, epochs=ts)
+                for ep in [20, 40, 60, 80]:
+                    network = create_network([100, 50, 25], x_train, y_train, sigmoid, sigmoid_prime,
+                                mse, mse_prime, train_size=ts, epochs=ep)
                     mnist_results[i].append(test_mnist(network, ts, x_test, y_test))
         plotter(mnist_results)
     else:
@@ -129,8 +133,6 @@ def main(arguments: A) -> None:
         (x_train, y_train), (x_test, y_test) = prep_data()
         network = create_network(shape, x_train, y_train, sigmoid, sigmoid_prime,
                                 mse, mse_prime, train_size=ts, epochs=ep, print_info=True)
-        # network = create_network([100, 25], x_train, y_train, sigmoid, sigmoid_prime,
-        #                           mse, mse_prime, train_size=10000, epochs=10)
 
         print("Accuracy for 1000 samples is:")
         print(test_mnist(network, 1000, x_test, y_test))
