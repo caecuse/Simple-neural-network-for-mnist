@@ -35,7 +35,7 @@ class Network:
 
     # train the network
     def fit(self, x_train: np.ndarray, y_train: np.ndarray, epochs: int,
-            learning_rate: float) -> None:
+            learning_rate: float, print_info=False) -> None:
         # sample dimension first
         samples = len(x_train)
 
@@ -58,4 +58,5 @@ class Network:
 
             # calculate average error on all samples
             err /= samples
-            print(f'epoch {i+1}/{epochs}   error={err}')
+            if print_info:
+                print(f'epoch {i+1}/{epochs}   error={err}')

@@ -1,7 +1,8 @@
-import cv2
 import numpy as np
+import cv2
 import glob
 import argparse
+from matplotlib import pyplot as plt
 from typing import Callable, List, Tuple, TypeVar
 from keras.datasets import mnist
 from keras.utils import np_utils
@@ -11,7 +12,6 @@ from active_layer import ActiveLayer
 from activation_functions import sigmoid, sigmoid_prime
 from losses import mse, mse_prime
 from os import getcwd
-from sys import argv
 
 A = TypeVar("A")
 FILES = glob.glob(getcwd()+"/samples/*.jpg")
@@ -41,7 +41,7 @@ def create_network(shape:List[int], x_data:np.ndarray, y_data:np.ndarray,
                    activation_prime:Callable[[float, float], float],
                    loss:Callable[[float], float], loss_prime:Callable[[float], float],
                    epochs: int=30, learning_rate: float=0.1,
-                   test_size: int=1000) -> Network:
+                   train_size: int=1000, print_info:bool=False) -> Network:
     net = Network()
     shape.insert(0, 28*28)
     shape.append(10)
@@ -52,11 +52,11 @@ def create_network(shape:List[int], x_data:np.ndarray, y_data:np.ndarray,
     # set loss function
     net.use(loss, loss_prime)
     # train
-    net.fit(x_data[0:test_size], y_data[0:test_size], epochs, learning_rate)
+    net.fit(x_data[0:train_size], y_data[0:train_size], epochs, learning_rate, print_info)
     return net
 
 
-def convert(path='samples') -> List[np.ndarray]:
+def convert() -> List[np.ndarray]:
     test_list = list()
     for file in FILES:
         image = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
@@ -99,25 +99,38 @@ def test_mnist(network: Network, test_size: int, x_test: np.ndarray,
     return accuracy / test_size
 
 
+def plotter(mnist_data: List[List[float]]):
+    im = plt.imshow(mnist_data, extent=[0, len(mnist_data), 0, len(mnist_data[0])])
+    plt.show()
+
+
 def main(arguments: A) -> None:
     if not arguments['layers']:
-        if arguments['test_size'] or arguments['epochs']:
-            print("At least one layer has to be specified when test_size or epochs are provided")
+        if arguments['train_size'] or arguments['epochs']:
+            print("At least one layer has to be specified when train_size or epochs are provided")
         else:
-            pass # TODO graph
+            mnist_results = []
+            (x_train, y_train), (x_test, y_test) = prep_data()
+            for i, ts in enumerate([1, 2]): #1000, 2000, 5000, 10000, 30000
+                mnist_results.append([])
+                for ep in [1, 10, 20, 50, 100]:
+                    network = create_network([200, 100, 50, 25], x_train, y_train, sigmoid, sigmoid_prime,
+                                mse, mse_prime, train_size=ts, epochs=ts)
+                    mnist_results[i].append(test_mnist(network, ts, x_test, y_test))
+        plotter(mnist_results)
     else:
         ts = 1000
         ep = 10
         shape = arguments['layers']
-        if arguments['test_size']:
-            ts = arguments['test_size']
+        if arguments['train_size']:
+            ts = arguments['train_size']
         if arguments['epochs']:
             ep = arguments['epochs']
         (x_train, y_train), (x_test, y_test) = prep_data()
         network = create_network(shape, x_train, y_train, sigmoid, sigmoid_prime,
-                                mse, mse_prime, test_size=ts, epochs=ep)
+                                mse, mse_prime, train_size=ts, epochs=ep, print_info=True)
         # network = create_network([100, 25], x_train, y_train, sigmoid, sigmoid_prime,
-        #                           mse, mse_prime, test_size=10000, epochs=10)
+        #                           mse, mse_prime, train_size=10000, epochs=10)
 
         print("Accuracy for 1000 samples is:")
         print(test_mnist(network, 1000, x_test, y_test))
@@ -128,9 +141,9 @@ def main(arguments: A) -> None:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Start up the neural network.')
     parser.add_argument('layers', metavar='layers', type=int, nargs='*')
-    parser.add_argument('--test_size', type=int)
+    parser.add_argument('--train_size', type=int)
     parser.add_argument('--epochs', type=int)
     args = vars(parser.parse_args())
     main(args)
 
-# python3 ./main.py 200 100 50 25 --test_size 30000  --epochs 10
+# python3 ./main.py 200 100 50 25 --train_size 30000  --epochs 10
